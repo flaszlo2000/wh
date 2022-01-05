@@ -4,13 +4,12 @@
 SAVE_FILE="/opt/wh/wh.log"
 
 function get_wh {
-    let index=1;
-    if [[ $# -eq 1 ]]; then
-        index=$1
+    if [[ $# -eq 0 ]]; then
+        set -- 1
     fi;
 
     if [[ -e $SAVE_FILE ]]; then
-        res=`tail -$index $SAVE_FILE | head -1`
+        res=`tail -$1 $SAVE_FILE | head -1`
 
         if [[ $(echo $res | wc -c) -gt 1 ]]; then
             cd $res # NOTE: use with source
@@ -25,6 +24,7 @@ function get_wh {
 function set_wh {
     if [[ $# -eq 1 ]]; then
         if [[ -d $1 ]]; then
+            set -- $(readlink -f $1)
             echo $1 >> $SAVE_FILE
         else
             echo "Not a valid input!" >&2
